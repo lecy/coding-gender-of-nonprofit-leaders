@@ -1,0 +1,386 @@
+---
+title: "Coding Gender"
+author: "Jesse Lecy"
+output:
+  html_document:
+    keep_md: true
+    theme: cerulean
+    highlight: haddock
+---
+
+
+
+```{r setup, include=FALSE}
+
+knitr::opts_chunk$set( echo = TRUE, message=F, warning=F )
+
+```
+
+
+
+
+# Load Compensation Data
+
+This data was generated from Part II of [Schedule J](https://www.irs.gov/pub/irs-pdf/f990sj.pdf) on the IRS 990 2014 E-Files.
+
+
+```{r}
+
+data.url <- "https://github.com/lecy/coding-gender-of-nonprofit-leaders/raw/master/DATA/CompDat-2014.rds"
+
+dat <- readRDS( gzcon( url( data.url )))
+
+names( dat )
+
+head( dat )
+
+```
+
+
+# Cleaning Names
+
+There are no clear IRS formatting guidelines for submitting unstructured data like names and organizational role. As a result, this data can be fairly messy.
+
+Here are some examples of using string processing functions in R to clean up some common problems with the data.
+
+```{r}
+
+dat$PersonNm <- toupper( dat$PersonNm )
+
+nm <- dat$PersonNm
+
+head( nm, 100 )
+
+nm <- gsub( "SR ", "", nm, ignore.case=FALSE )
+nm <- gsub( "DR ", "", nm, ignore.case=FALSE )
+nm <- gsub( "REV ", "", nm, ignore.case=FALSE )
+nm <- gsub( "MR ", "", nm, ignore.case=FALSE )
+nm <- gsub( "SISTER ", "", nm, ignore.case=FALSE )
+nm <- gsub( "REVEREND ", "", nm, ignore.case=FALSE )
+nm <- gsub( "PROF ", "", nm, ignore.case=FALSE )
+nm <- gsub( "RABBI ", "", nm, ignore.case=FALSE )
+nm <- gsub( "^.{1} ", "", nm ) # remove numbers at the beginning of names
+nm <- gsub( "^.{1} ", "", nm )
+nm <- gsub( "[0-9]", "", nm ) # remove all numbers from names
+nm <- gsub( "^ ", "", nm ) # remove spaces at the beginning of names
+nm <- gsub( "^ ", "", nm )
+
+nm[ nm == "" ] <- NA  # remove empty name elements
+
+
+```
+
+
+# Split Full Names Into Parts
+
+In order to use the **gender** package in R, we need to isolate first names. We do this by splitting the full name into individual components, then retaining the first name in the list.
+
+In some cases this approach will fail. For example, if the names are listed in reverse order:
+
+Smith, John
+
+Or perhaps a person uses a title or an abbreviated first name:
+
+Senator Smith
+
+JW Smith
+
+
+```{r}
+
+
+x <- strsplit( nm, " " )
+
+first.names <- unlist( lapply( x, `[[`, 1 ) )
+
+head( first.names, 100 )
+
+
+dat$FirstName <- tolower( first.names )
+
+fn <- unique( tolower( first.names ) )
+
+length( fn ) # number of unique first names
+
+```
+
+
+
+
+
+
+# Coding Gender
+
+
+## The Gender Package in R
+
+### Usage
+
+```{r, eval=F}
+gender(names, years = c(1932, 2012), method = c("ssa", "ipums", "napp",
+  "kantrowitz", "genderize", "demo"), countries = c("United States", "Canada",
+  "United Kingdom", "Germany", "Iceland", "Norway", "Sweden"))
+```
+
+
+
+### Description
+
+This function predicts the gender of a first name given a year or range of years in which the person was born. The prediction can use one of several data sets suitable for different time periods or geographical regions. See the package vignette for suggestions on using this function with multiple names and for a discussion of which data set is most suitable for your research question. When using certains methods, the genderdata data package is required; you will be prompted to install it if it is not already available.
+
+
+
+### Arguments
+
+**names**
+
+First names as a character vector. Names are case insensitive.
+
+**years**
+
+The birth year of the name whose gender is to be predicted. This argument can be either a single year, a range of years in the form c(1880, 1900). If no value is specified, then for the "ssa" method it will use the period 1932 to 2012; acceptable years for the SSA method range from 1880 to 2012, but for years before 1930 the IPUMS method is probably more accurate. For the "ipums" method the default range is the period 1789 to 1930, which is also the range of acceptable years. For the "napp" method the default range is the period 1758 to 1910, which is also the range of acceptable years. If a year or range of years is specified, then the names will be looked up for that period.
+
+**method**
+
+This value determines the data set that is used to predict the gender of the name. The "ssa" method looks up names based from the U.S. Social Security Administration baby name data. (This method is based on an implementation by Cameron Blevins.) The "ipums" method looks up names from the U.S. Census data in the Integrated Public Use Microdata Series. (This method was contributed by Ben Schmidt.) The "kantrowitz" method uses the Kantrowitz corpus of male and female names. The "genderize" method uses the Genderize.io <http://genderize.io/> API, which is based on "user profiles across major social networks." The "demo" method is uses the top 100 names in the SSA method; it is provided only for demonstration purposes when the genderdata package is not installed and it is not suitable for research purposes.
+
+**countries**
+
+The countries for which datasets are being used. For the "ssa" and "ipums" methods, the only valid option is "United States" which will be assumed if no argument is specified. For the "napp" method, you may specify a character vector with any of the following countries: "Canada", "United Kingdom", "Germany", "Iceland", "Norway", "Sweden". For the "kantrowitz" and "genderize" methods, no country should be specified.
+
+
+
+
+
+
+
+
+# Example
+
+### Load Some Data
+
+```{r, eval=T }
+
+first.names <- c("dave", "glen", "beverly", "jennifer", "stacy", "lynn", "betty", 
+"linda", "laurie", "marilyn", "michelle", "cara", "allison", 
+"alan", "jerry", "bo", "paul", "jim", "jeff", "chuck", "henry", 
+NA, "steve", "saddiq", "kim")
+
+```
+
+### Categorize Names
+
+```{r}
+
+# install.packages( "gender" )
+
+library( gender )
+
+example.results <- gender(  first.names )
+
+# when first installing, you will be asked to build a local database of names
+# > gen <- gender( fn, method="ssa" )
+# Install the genderdata package? 
+# 
+# 1: Yes
+# 2: No
+# Selection:  <- TYPE "Yes"
+
+print( example.results, n=10 )
+
+
+```
+
+
+## Code Names from Compensation Data
+
+```{r}
+
+
+gen <- gender( fn, method="ssa" )
+
+# Additional Available Methods
+# gen <- gender( fn, method="ipums" )
+# gen <- gender( fn, method="kantrowitz" ) 
+
+
+print( gen, n=10 )
+
+
+```
+
+
+
+You can add gender to the original dataset by merging results:
+
+```{r}
+
+gen <- gen[ , 1:4 ]
+
+dat <- merge( dat, gen, by.x="FirstName", by.y="name", all.x=T )
+
+table( dat$gender, useNA="ifany" )
+
+```
+
+
+
+
+# Failed Matches
+
+Since the R package assigns gender based upon matches to the Social Security database of birth certificates, names that do not appear in the database (or appear too few times and thus are not reported by the SSA for privacy reasons) cannot be properly coded.
+
+
+```{r}
+
+# NAMES THAT DO NOT RECEIVE A CLEAR GENDER CODE
+
+ambiguous.cases <- dat$gender == "either"
+ambiguous.cases[ is.na(ambiguous.cases)] <- FALSE
+
+dat$PersonNm[ ambiguous.cases ]
+
+# ONLY ONE NAME HAS EXACTLY 50-50 SPLIT:  LUGENE!
+
+
+
+
+
+
+# NAMES NOT FOUND
+
+no.gender <- dat$PersonNm[ is.na(dat$gender) ]
+
+head( no.gender, 10 )
+
+
+
+```
+
+
+
+# Comparing Compensation by Gender
+
+```{r}
+
+library( dplyr )
+
+options( scipen=8 )
+
+dat$gender[ dat$gender == "either" ] <- NA
+
+d2 <- dat[ dat$AvgHrs > 1 & dat$RptCmpOrg > 1 & dat$Org501c3 == 1 , ]
+
+
+summary( d2$RptCmpOrg[ d2$gender == "male" ] )
+
+hist( d2$RptCmpOrg[ d2$gender == "male" ], xlim=c(0,500000), 
+      breaks=seq(0,max(d2$RptCmpOrg,na.rm=T),10000), 
+      col="steelblue", border="white", yaxt="n", 
+      ylab="", xlab="Annual Salary", main="Compensation: Male" )
+
+
+
+
+summary( d2$RptCmpOrg[ d2$gender == "female" ] )
+
+hist( d2$RptCmpOrg[ d2$gender == "female" ], xlim=c(0,500000), 
+      breaks=seq(0,max(d2$RptCmpOrg,na.rm=T),10000), 
+      col="steelblue", border="white", yaxt="n", 
+      ylab="", xlab="Annual Salary", main="Compensation: Female" )
+
+
+
+
+# people with pay over $8 million
+
+filter( dat, RptCmpOrg > 8000000 )
+
+
+
+
+t.test( dat$RptCmpOrg ~ dat$gender )
+
+
+
+
+```
+
+
+### Comparing Density Plots
+
+```{r}
+
+library(ggplot2)
+
+
+ggplot( dat[!is.na(dat$gender),], aes( x=log(RptCmpOrg), fill=gender )) + 
+        geom_density(alpha = 0.5) + xlim(10,15) +
+        xlab( "Compensation (logged)" )
+
+ggplot( dat, aes( x=log(RptCmpOrg), fill=gender )) + 
+        geom_density(alpha = 0.5) + xlim(10,15) +
+        xlab( "Compensation (logged)" )
+
+```
+
+
+
+# Coding Titles
+
+The IRS forms (Schedule J) contain information about all leaders, board members, and highly-compensated individuals in the nonprofit organizations. We often want to isolate one of these groups. For example, perhaps we want to look at only CEOs or CFOs.
+
+Unfortunately the titles are also not standardized. But we can apply some similar string processing techinques to identify sets of individuals. 
+
+```{r}
+
+
+dat$TitleTxt <- toupper( dat$TitleTxt )
+
+# d2 <- dat
+
+title <- dat$TitleTxt
+
+head( title, 50 )
+
+length( unique( title ))  # 161,162 different titles used!!!
+
+title <- gsub( "\\/", " ", title )
+title <- gsub( "\\.", "", title )
+
+
+sort( table( title ) , T )[ 1:50 ] %>% names
+
+
+# to get list of titles
+# sort( table( title ) , T )[ 1:500 ] %>% names
+
+
+# PRESIDENT / CEO
+
+director <- 
+c("PRESIDENT","EXECUTIVE DIRECTOR","CEO","EXECUTIVE DI","PRESIDENT & CEO",              
+  "EXECUTIVE DIREC","PRESIDENT CEO","CHIEF EXECUTIVE OFFICER","PRESIDENT ELECT",        
+  "EXEC DIRECTOR","PRESIDENT-ELECT","DIR","EXEC DIR","PRESIDENT DIRECTOR",
+  "NATIONAL DIRECTOR","PRES","CHIEF","MANAGING DIRECTOR","EXEC DIRECTO","EXEC DIRECT",
+  "PRESIDENT CE","DIRECTOR PRESIDENT","PRESIDENT &","EX DIRECTOR","PRESIDENT, CEO",
+  "PRESIDENT DI","PRESIDENT   CEO","PRES CEO","PRESIDENT, DIRECTOR","EXEC DIRECTOR CEO",
+  "PRESIDENT CHAIRMAN" )
+
+
+# select all with these titles
+
+d2 <- dat[ title %in% director , ]
+
+
+# select by additional criteria such as org type and minimum comp / hours
+
+d3 <- d2[ d2$AvgHrs > 1 & d2$RptCmpOrg > 1 & d2$Org501c3 == 1 , ]
+
+
+```
+
+
+
+
+

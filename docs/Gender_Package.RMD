@@ -1,0 +1,416 @@
+---
+title: "The 'gender' Package"
+output: html_document
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning=F, message=F)
+```
+
+
+
+
+```{r, eval=F, echo=F}
+fn <- c("dave", "glen", "beverly", "jennifer", "stacy", "lynn", "betty", 
+"linda", "laurie", "marilyn", "michelle", "cara", "allison", 
+"alan", "jerry", "bo", "paul", "jim", "jeff", "chuck", "henry", 
+NA, "steve", "saddiq", "kim", "cyndy", "randall", "kelly", "matthew", 
+"zachary", "tina", "jacob", "leticia", "robin", "daniel", "frank", 
+"velda", "ann", "genvevia", "courtney", "diane", "debra", "dorothy", 
+"lenore", "ileana", "donald", "june", "ray", "maurice", "fred", 
+"rick", "gregory", "deana", "mark", "marianne", "patricia", "sandra", 
+"george", "david", "kimberly", "kas", "kevin", "edward", "mary", 
+"brian", "stephen", "adrienne", "joseph", "fran", "anne", "william", 
+"kenneth", "robert", "steven", "james", "lynne", "karen", "michael", 
+"carl", "cynthia", "sandy", "bud", "clint", "pat", "frederick", 
+"edwin", "blair", "hagood", "dwight", "jorge", "scott", "douglas", 
+"benjamin", "baker", "bernard", "clay", "richard", "peter", "sally", 
+"thomas", "jessine", "harry", "bennett", "martin", "warren", 
+"sarah", "john", "alston", "dallas", "dennis", "howard", "timothy", 
+"larry", "lcronald", "en1", "sh2", "sh1", "vincent", "betsy", 
+"jd", "reginald", "denise", "toni", "king", "ron", "resma", "phillip", 
+"shawn", "unseld", "helen", "brad", "marshall", "tim", "babe", 
+"renee", "jeanne", "phil", "cindy", "jan", "julia", "nicole", 
+"theta", "rich", "janet", "andrew", "ronald", "curtis", "kathryn", 
+"jason", "terry", "emily", "francis", "charles", "gerry", "pam", 
+"gary", "vernol", "al", "roy", "rose", "don", "leroy", "lanny", 
+"pauline", "ken", "alene", "angie", "tawil", "louis", "isaac", 
+"missry", "manuel", "claudia", "wendy", "su", "cathy", "susan", 
+"christine", "claire", "hermine", "penny", "andrea", "jean", 
+"kara", "jessica", "maria", "lauren", "carol", "ceva", "golden", 
+"cheryl", "kaye", "matin", "lucinda", "melvin", "reyna", "gail", 
+"justin", "hermelinda", "andre", "will", "loretta", "deidrea", 
+"tristan", "ja-key", "laura", "shirley", "eddie", "yevonne", 
+"jackie", "gerald", "jill", "heather", "elaine", "mercedes", 
+"donna", "karyn", "mindy", "jenny", "aleen", "jamie", "lindsay", 
+"gavin", "chris", "erin", "patrick", "tom", "barb", "randy", 
+"julie", "mike", "jack", "sue", "shari", "lawrence", "shelly", 
+"jimmie", "christopher", "jordan", "eric", "julian", "barbara", 
+"deborah", "tarina", "carrie", "pamela", "joy", "amy", "paula", 
+"lisa", "herman", "debbie", "bryan", "dean", "milo", "allen", 
+"emma", "dale", "todd", "ahmed", "rene", "beth", "jane", "alice", 
+"carmen", "kirk", "manley", "patsy", "anna", "chaney", "charlotte", 
+"ester", "joan", "melissa", "roger", "ruth", "sylvester", "carolyn", 
+"rob", "ed", "joshua", "herbert", "judi", "lorie", "judie", "homer", 
+"maureen", "duane", "sharon", "karla", "shay", "suzanne", "teresa", 
+"candice", "carla", "sheila", "kristine", "ross", "stephne", 
+"mitzi", "keith", "jimmy", "billy", "forrest", "ralph", "megan", 
+"bob", "kash", "faith", "maxine", "joe", "chief", "cameron", 
+"dawn", "hanifa", "dan", "albert", "clyde", "andy", "anita", 
+"russ", "terri", "anil", "latha", "wayne", "delmer", "hattie", 
+"lucy", "edith", "baxter", "york", "renty", "joretta", "roland", 
+"candace", "allahna", "erasme", "monica", "rosalind", "afolabi", 
+"jose", "marlo", "meryl", "samai", "claude", "alvin", "reiferd", 
+"shannon", "theodore", "judith", "tracy", "mary-joan", "jeffrey", 
+"abigail", "charisse", "shane", "noah", "ted", "marco", "sabrina", 
+"cristina", "brenda", "joel", "christie", "stan", "graham", "jesse", 
+"margaret", "neil", "natalie", "gina", "tami", "ali", "marcy", 
+"molly", "kathleen", "nancy", "leslie", "russell", "angela", 
+"mathew", "ezad", "danny", "carlton", "dc", "doug", "tassie", 
+"neal", "jon", "kyle", "leon", "stuart", "arnold", "stacey", 
+"norma", "bowie", "daryl", "ira", "marty", "arthur", "vimala", 
+"veronica", "rachel", "murli", "maryam", "gorm", "eleanor", "tony", 
+"bill", "cmjoseph", "bruce", "maxwell", "cecilia", "mitchell", 
+"lynns", "lucille", "bridget", "rita", "audrey", "firouzeh", 
+"regina", "maryanne", "elizabeth", "svetlana", "van", "hugh", 
+"rebecca", "lara", "jeremy", "brock", "junaid", "meredith", "niketa", 
+"sumita", "bonnie", "rajive", "colin", "beatrice", "vivian", 
+"cathleen", "wendell", "philip", "judy", "victor", "rodney", 
+"marybeth", "rosemary", "ana", "darren", "clayton", "langdon", 
+"ryan", "samuel", "spero", "earl", "walter", "lem", "kristin", 
+"priscilla", "katherine", "mili", "norwood", "corey", "marlin", 
+"lora", "barry", "darrell", "darlene", "kelvin", "maryland", 
+"kathy", "jock", "joni", "maisie", "norman", "sam", "greta", 
+"stanley", "jay", "diana", "tarik", "jamye", "koen", "marcia", 
+"sherman", "glenn", "senator", "delegate", "commissioner", "alexandre", 
+"jie", "kent", "chad", "anthony", "ellen", "kami", "neena", "nikki", 
+"jake", "robbie", "rj", "ben", "matt", "alejandro", "elisa", 
+"millie", "travis", "trish", "laural", "ouida", "wesley", "dana", 
+"clifton", "bishop", "lon", "elise", "charlsie", "bobby", "ardis", 
+"gordon", "doris", "danielle", "mitch", "jayna", "tyler", "eugene", 
+"vickie", "becky", "brandon", "kathelen", "facundo", "lindsey", 
+"muhtar", "jonathan", "leah", "chilton", "hope", "dane", "melinda", 
+"shahid", "kate", "marion", "frances", "hamilton", "conrad", 
+"md", "jw", "corie", "calvin", "greg", "johny", "ricky", "jc", 
+"wilson", "joyce", "veneta", "whitney", "mercedia", "carmela", 
+"joann", "luke", "joanne", "hal", "lea", "numi", "kamba", "marlon", 
+"patrice", "len", "mona", "werner", "manya", "regis", "troy", 
+"jazmin", "christian", "tionna", "melanie", "sherryann", "tray", 
+"burney", "winn", "vic", "shad", "derrick", "bernal", "mott", 
+"johnny", "dolan", "dwayne", "jacqueline", "tonya", "owen", "pasquale", 
+"toby", "adam", "cheris", "trent", "yvette", "mel", "lewis", 
+"shon", "stephanie", "mrs", "campione", "dunn", "jones", "khalifa", 
+"silverstein", "watson", "corbett", "le", "zellweger", "clark", 
+"duffley", "lee", "lilley", "mcgeary", "nagaraj", "privilegi", 
+"wiedemann", "poe", "powers", "beverlee", "garrett", "augustine", 
+"annie", "rand", "kris", "wade", "faris", "stewart", "leland", 
+"harlan", "neele", "sgt", "cosmina", "art", "bronson", "taub", 
+"craig", "norene", "gabrielle", "misse", "smith", "hurley", "reed", 
+"adkisson", "barrick", "fyffe", "hurt", "johnson", "lyond", "oldhan", 
+"oliver", "pepper", "perry", "riley", "samsil", "spees", "walters", 
+"whittaker", "yonts", "zimmerman", "dominic", "guy", "brandi", 
+"dorthea", "dickie", "martha", "rudolph", "jerrilyn", "sherri", 
+"eileen", "marissa", "iddo", "kerry", "helga", "zareh", "gene", 
+"glenna", "kimberley", "mack", "javier", "kristy", "brent", "ruben", 
+"chandani", "rosanne", "paulette", "meghan", "lillian", "catherine", 
+"shaun", "cynthis", "ernest", "lou", "deb", "noe", "faye", "ian", 
+"traci", "saul", "malcolm", "althornia", "ricardo", "marjorie", 
+"lois", "eldon", "wilma", "alvina", "vernon", "burdette", "naomi", 
+"emerardo", "mouin", "srijaya", "justo", "mirella", "altair", 
+"leisha", "ainsworth", "zip", "eli", "orin", "klara", "schanequa", 
+"rachael", "nathalie", "patti", "sherry", "wilmide", "suzan", 
+"doyle", "darla", "brendan", "lori", "holly", "ta", "willaim", 
+"victoria", "langston", "the", "basil", "nanette", "denzil", 
+"reese", "bart", "michele", "sydnee", "bradford", "harvey", "fredrica", 
+"deen", "janice", "zane", "christina", "roderick", "krishna", 
+"karl", "tamika", "swin", "manny", "marta", "bido", "brett", 
+"silas", "westin", "roslind", "kay", "parvine", "randi", "cheryll", 
+"arlee", "shelley", "ephraim", "martial", "ha", "see", "geoffrey", 
+"wanda", "mayor", "alissa", "lowell", "katrina", "leo", "katharine", 
+"della", "gilbert", "boyd", "willie", "hudnall", "haywood", "allston", 
+"revelle", "nick", "ms", "g", "lonnie", "sandi", "abbey", "rod", 
+"jodi", "j", "reverend", "vicki", "aileen", "tunch", "inger", 
+"jody", "enzo", "leonard", "zach", "derek", "harris", "raymond", 
+"javad", "elena", "bari", "grace", "felice", "sanaz", "piya", 
+"elissa", "bogdana", "chrissy", "tiffany", "jessie", "ivette", 
+"jillayne", "kenny", "tanya", "robbin", "cyn", "jonience", "tara", 
+"father", "porter", "wallace", "sean", "fabienne", "maggie", 
+"jene", "teri", "ginger", "sylvia", "milan", "josh", "harold", 
+"kurt", "amanda", "nathaniel", "garry", "cassandra", "w", "arlan", 
+"mickey", "bliss", "trevis", "leeann", "ethel", "carmelina", 
+"morris", "erik", "brendon", "shara", "krista", "linnea", "arturo", 
+"monique", "karleen", "casey", "tania", "marlys", "edna", "deron", 
+"leigh", "therese", "rhonda", "vance", "avram", "samson", "elliott", 
+"mehul", "sara", "marc", "kristen", "marita", "fayla", "jerome", 
+"dick", "tracey", "waldemar", "kira", "mac", "marcus", "evan", 
+"gil", "t", "armando", "gabriel", "laurance", "samantha", "gerard", 
+"donroy", "ludmilla", "penelope", "johathan", "col", "valerie", 
+"maryjane", "chas", "maribeth", "carpenter", "trevor", "evans", 
+"beat", "orman", "clarence", "kran", "helena", "jaja", "chip", 
+"colleen", "durland", "bridgid", "canon", "louise", "dov", "roberta", 
+"penina", "grant", "paige", "missy", "wren", "rickey", "abb", 
+"krandall", "aubrey", "spencer", "christi", "brooks", "delana", 
+"mabe", "jr", "flave", "buck", "tyrize", "heidi", "phyllis", 
+"phoebe", "polly", "brien", "ilana", "florine", "nathan", "miriam", 
+"morton", "dolores", "rona", "reva", "bessie", "bubba", "forest", 
+"terrence", "duke", "clare", "remak", "corlis", "marlyn", "ginny", 
+"susanne", "esther", "delores", "dorothea", "peggy", "harriette", 
+"rosemarie", "aleda", "tamra", "jacquie", "pris", "mae", "mariel", 
+"irene", "noelyn", "lonni", "chinwe", "colby", "jaime", "cj", 
+"seth", "lamar", "jackson", "luis", "kendra", "sondra", "april", 
+"braxton", "scotty", "kathi", "deanie", "cary", "hazel", "morey", 
+"ty", "shelia", "carly", "raquel", "philomena", "kiley", "aaron", 
+"b", "reesa", "br", "bernadette", "muriel", "audra", "shauna", 
+"arianna", "olive", "irving", "levern", "antonia", "cliff", "thaddaeus", 
+"renise", "josephine", "huntley", "lynette", "debb", "martie", 
+"winthrop", "nadine", "jenifer", "jeffery", "deirdre", "cody", 
+"sonja", "bradley", "yale", "gregg", "dustin", "clifford", "jonathon", 
+"coble", "c", "nanci", "sydney", "dell", "sheryl", "tamara", 
+"ximena", "san", "jessen", "randen", "deepa", "jess", "iris", 
+"kendall", "virginia", "elicia", "tasa", "sonya", "drew", "debbi", 
+"kendal", "marj", "signey", "ursula", "nina", "jair", "rana", 
+"janine", "carolina", "jacques", "igor", "betts", "nora", "alfred", 
+"jennine", "suse", "srey", "loan", "jeffry", "alexa", "alex", 
+"tammy", "lyn", "serita", "reid", "yvonne", "clara", "alicia", 
+"msgr", "bg", "carretta", "hon", "lt", "dcn", "marsha", "morgan", 
+"salvatore", "sidney", "signe", "jerrell", "lakita", "dorann", 
+"collette", "janis", "kellie", "christy", "luann", "kristi", 
+"hobbs", "luca", "munk", "wasser", "yisroel", "denver", "dixie", 
+"charlie", "bryce", "milford", "bernice", "gwynneth", "lorraine", 
+"hilary", "katie", "blaine", "minor", "coby", "amie", "solomon", 
+"jstephen", "alexander", "erica", "landri", "margarita", "pastor", 
+"ogden", "lance", "moiz", "folsom", "rogan", "thurgood", "davern", 
+"fernando", "crystal", "dee", "voni", "virnette", "clete", "arlene", 
+"kristal", "sj", "ga", "horace", "fabiene", "may-kin", "savio", 
+"suki", "cecillia", "moriya", "yaoxing", "koven", "lin", "current", 
+"theron", "guice", "cleophus", "kewal", "millard", "mohammed", 
+"faisal", "iyad", "mahmoud", "adel", "khaled", "mia", "abdulrauf", 
+"willard", "tem", "bev", "trudy", "fern", "kirt", "linwood", 
+"emilee", "tommy", "teddie", "peg", "sima", "lj", "marvin", "alonzo", 
+"lincoln", "jayne", "rex", "emmett", "shelba", "esten", "cherrie", 
+"vargas", "daphna", "burke", "wales", "tiner", "baldwin", "buchanan", 
+"hazelwood", "jiles", "lovell", "nicholson", "stripling", "wise", 
+"trel", "pallas", "irwin", "bradly", "fredrick", "mitchel", "shoshana", 
+"violet", "maurine", "chamberlain", "costakos", "elsbernd", "holmes", 
+"johansen", "korducki", "kutt", "lang", "mchugh", "narr", "o'brien", 
+"stellner", "tydrich", "whited", "kruse", "tiggelaar", "nesse", 
+"kristina", "chase", "gerra", "skip", "lucie", "kit", "coney", 
+"mason", "luther", "coley", "red", "joline", "butch", "liz", 
+"marel", "timm", "yang-tze", "adrian", "lila", "corinne", "dianne", 
+"davis", "doze", "freda", "claiborne", "charmaine", "fahemeh", 
+"ranft", "rina", "rae", "jeannie", "sarena", "vicky", "pierre", 
+"thor", "inez", "winfifred", "florence", "mildred", "stella", 
+"juhi", "selin", "monazir", "cathi", "evelyn", "haden", "sanjeeva", 
+"renick", "ilona", "antonella", "tal", "mihaly", "felicia", "ren", 
+"rose-inza", "hans", "mario", "nansook", "radhika", "willibald", 
+"sombat", "mararita", "carmelo", "ruut", "joar", "marie", "jade", 
+"camille", "dulcie", "fillmore", "marla", "dona", "loraine", 
+"harriet", "natalye", "pete", "laverne", "caitlin", "lura", "cory", 
+"mj", "bobbie", "harriett", "ceth", "azin", "suzanna", "siri", 
+"connie", "meri", "granville", "cloy", "arleen", "joanna", "dorian", 
+"gisela", "jeannine", "kengmean", "wei-tung", "khalil", "mehmood", 
+"tarek", "raeed", "mouffa", "coleen", "hatem", "minkie", "maia", 
+"hank", "gayle", "theresa", "tommie", "venetia", "lilian", "alexandra", 
+"hartley", "dodie", "laverl", "hiroko", "nobuya", "akemi", "nanako", 
+"farron", "yuki", "sheri", "deodatus", "anastasia", "vanessa", 
+"zoe", "reggie", "baffin", "pearl", "lazaro", "darryl", "diego", 
+"ethan", "katrin", "leonor", "garold", "barton", "kerin", "venus", 
+"sharol", "nelson", "meherwan", "judge", "vince", "cornelius", 
+"lex", "florencio", "carlos", "les", "lionel", "webb", "natali", 
+"d", "r", "franklin", "gifford", "gen", "alberto", "fermin", 
+"arden", "lane", "jeremiah", "brain", "marlene", "virgil", "becki", 
+"elmer", "sagar", "sunil", "mick", "chairman", "alma", "angel", 
+"josefina", "trisha", "gregor", "randolph", "wc", "cheryn", "merrill", 
+"honorable", "gayla", "bethany", "cece", "marma", "jeane", "sue-anne", 
+"jyothi", "win", "randal", "loy", "reynold", "darrel", "monty", 
+"ritu", "navneet", "gena", "woody", "arlen", "alesanne", "rocio", 
+"caron", "misty", "merit", "kessa", "scot", "ellis", "madelon", 
+"estelle", "allan", "firelli", "ganeene", "carin", "julius", 
+"sonal", "jenette", "wendi", "keni", "apolonio", "ruggero", "ennis", 
+"flossie", "deloris", "ernestine", "roosevelt", "zenaida", "chritina", 
+"rufus", "damian", "maury", "marinel", "shanna", "laurence", 
+"syed", "savino", "sandara", "belinda", "neila", "roscoe", "demerst", 
+"lutz", "harley", "caroline", "kam", "rowland", "santiago", "armin", 
+"kip", "pattye", "cecile", "stanford", "janalee", "kelli", "hayes", 
+"fabianne", "shimon", "yoo", "daria", "floyd", "chatri", "alison", 
+"dionne", "drexel", "gaylan", "wendel", "alton", "omar", "anne-marie", 
+"cristin", "ashley", "christella", "sherelene", "myrna", "princess", 
+"etta", "drusilla", "margarette", "sharlita", "ramsay", "patty", 
+"duncan", "sherrie", "oceana", "karalee", "bobbi", "monte", "max", 
+"launda", "martina", "karren", "cordell", "annette", "dorene", 
+"fleury", "open", "kody", "nita", "paule", "sylana", "vikki", 
+"marge", "denae", "mavis", "stephan", "kendyl", "kinnan", "nicholas", 
+"ritchey", "amelia", "hulett", "sameer", "rochelle", "gertrude", 
+"balbina", "marti", "claudia-parks", "linne", "carole", "nola", 
+"jasmine", "myfe", "shelby", "garland", "landon", "hugo", "madlyn", 
+"geraldine", "duayne", "lenny", "christa", "cherilyn", "rao", 
+"neerav", "naresh", "virang", "atul", "jerik", "jerilyn", "shana", 
+"juan", "aric", "lai", "lydia", "geof", "aesha", "jolene", "jana", 
+"sherah", "coffin", "coler", "donnelly", "mccusker", "molenaar", 
+"sillin", "swedlund", "hubbard", "sabourin", "peteroy", "cohn", 
+"coli", "cooper", "luck", "ceilia", "winnie", "smyth", "darrin", 
+"abraham", "mikee", "katy", "tahirih", "micaela", "jessi", "margot", 
+"sigurd", "barrett", "debie", "lorenzo", "leann", "thelma", "tricia", 
+"kayte", "azita", "aurelia", "dory", "tonia", "barbra", "rory", 
+"lexann", "sterling", "bonna", "ee", "brady", "lowen", "athena", 
+"jasna", "marylynn", "annemarie", "val", "alisha", "louie", "buddy", 
+"stu", "wynn", "winston", "kenyon", "merle", "nathanael", "barbie", 
+"lyles", "rodger", "ronnie", "chapin", "rodman", "elisabeth", 
+"page", "doreen", "juli", "firdaus", "lula", "aljean", "nathanial", 
+"lela", "margo", "judson", "closey", "evalie", "rogelio", "beatriz", 
+"edmund", "kafi", "magdalena", "nike", "sylia", "deidre", "meagan", 
+"lesly", "cullen", "brant", "konrad", "hamid", "quareeb", "salim", 
+"emilio", "sajid", "laney", "cassie", "susie", "sherryl", "ruby", 
+"marquetta", "gloria", "pearlene", "danette", "antje", "chung", 
+"kenton", "eva", "jens", "sir", "simon", "prof", "rahul", "hrh", 
+"dame", "caleb", "geoffery", "nicco", "lebeo", "juliet", "sinforosa", 
+"mardoqueo", "evaristo", "lore", "kraig", "karola", "rusty", 
+"otis", "freddie", "michaela", "annand", "jesus", "branden", 
+"jared", "raul", "nestor", "colene", "ophelia", "amos", "dedric", 
+"kathrine", "general", "arleya", "antashe", "da'quan", "lamell", 
+"brendien", "gwen", "ariana", "adora", "madie", "rabbi", "oscar", 
+"roslyn", "moneese", "lanita", "niya", "marian", "ericka", "lynda", 
+"grizel", "alle", "gillian", "saundra", "jame", "herb", "yolette", 
+"hanshi", "conny", "denny", "denys", "delaine", "abe", "donus", 
+"heath", "goldee", "tyrone", "kasey", "yaulanda", "georgette", 
+"joelle", "ina", "merris", "stefani", "alexis", "rocky", "eddy", 
+"eliza", "laurel", "serena", "pattie", "gretchen", "maryann", 
+"stacie", "abdur-rahim", "shahied", "faatimah", "sultan", "ivory", 
+"calin", "brigitta", "ghodsi", "manning", "jeri", "eugenia", 
+"kyro", "bertram", "evelynn", "terrilyn", "sallie", "hilda", 
+"deshanta", "frian", "kali", "alyssa", "cecille", "beryl", "gdaniel", 
+"sheldon", "barinada", "ajoke", "jandrea", "gay", "gigi", "cherylanne", 
+"marann", "madora", "benine", "campbell", "madeleine", "thien-di", 
+"jayasri", "delphine", "charla", "rosalie", "pavi", "nichole", 
+"anders", "anh", "rik", "edgar", "meg", "tucker", "tylaann", 
+"fain", "irma", "corrine", "woodrow", "edvina", "hannah", "nair", 
+"gale", "althea", "edie", "farhard", "uma", "bard", "scuffy", 
+"glancey", "wahlstrand", "leoni", "ives", "flannigan", "krenz", 
+"burton", "990t", "connaughton", "maki", "naland", "ymelda", 
+"ebenezer", "mabel", "winfred", "reynolds", "curt", "isabell", 
+"mimi", "keri", "randee", "daphne", "roseanne", "auberry", "berron", 
+"bergsma", "boldt", "bottorff", "davey", "ellery", "greller", 
+"guyott", "hammond", "humphreys", "kraft", "loftus", "newland", 
+"palmer", "rahn", "rimsans", "roeder", "roper", "seitz", "ketzenberger", 
+"moni", "caryn", "sharlane", "stefanie", "lester", "sybil", "lilo", 
+"suzie", "darcee", "roarke", "delmar", "cecil", "shoko", "georgia", 
+"dina", "vonda", "celete", "roxie", "nerily", "bert", "ilene", 
+"helene", "marisa", "maddy", "fredda", "chester", "blake", "shea", 
+"rothman", "pegues", "marks", "kerr", "holland", "healy", "childress", 
+"angelo", "bj", "logan", "tracie", "stevan", "didier", "patrizia", 
+"marina", "chao-long", "claus", "diann", "carlisle", "parnick", 
+"scarlett", "brittany", "annmarie", "giulia", "ar", "jo", "kolleen", 
+"maryruth", "darin", "candy", "valda", "aladee", "concepcion", 
+"sufia", "aurora", "glennda", "shreyasee", "erick", "mckenna", 
+"hutson", "schuller", "layher", "shah", "lowman", "neckman", 
+"tongia", "mejias", "henk", "silverio", "alyson", "trena", "loren", 
+"angus", "talia", "lory", "mena", "dawna", "bonita", "roz", "arnie", 
+"emil", "foster", "fritz", "randholph", "merrye", "rysia", "eliot", 
+"joanie", "miles", "merry", "perlman", "kenrick", "colwell", 
+"peters", "ramar", "rice", "sause", "driscoll", "lippert", "gerber", 
+"tobin", "kennedy", "del", "cecelia", "ledon", "folden", "nedra", 
+"lanna", "donnie", "drex", "madeline", "eloise", "theresia", 
+"kentucky", "maribeh", "erma", "elric", "margie", "hazzan", "selma", 
+"jasmin", "kelley", "cori", "theo", "kirby", "kaliope", "yusang", 
+"casper", "miguel", "grover", "leanne", "mattie", "bryon", "mariam", 
+"ladeine", "raymon", "nickolas", "amar", "sherin", "jolie", "montgomery", 
+"lola", "dalton", "burce", "shiera", "parag", "lianne", "jinny", 
+"yaphet", "carey", "abbie", "soren", "lloyd", "ward", "marlina", 
+"menachem", "rudy", "ciro", "jospeh", "elliot", "vito", "clarita", 
+"milton", "kermit", "jum", "thurl", "deming", "sammie", "luneack", 
+"h", "thurman", "quent", "melody", "janak", "julee", "janalou", 
+"denedria", "aliza", "ae", "secretary", "frederik", "nikhil", 
+"prabhu", "manish", "kailash", "sudha", "sanjay", "sv", "arvind", 
+"ram", "anu", "raj", "venkatesh", "minoo", "tuanja", "latuanja", 
+"olga", "nate", "kitty", "meaghan", "corine", "f", "ephraigm", 
+"hubert", "micky", "candyce", "launa", "octovio", "glenda", "lorrie", 
+"detra", "suzette", "azim", "reno", "clinton", "sherl", "jennie", 
+"crossan", "gino", "claudio", "beau", "enrico", "ann-clore", 
+"percy", "dewey", "erv", "siobhan", "lockey", "albino", "celest", 
+"vencelo", "dinny", "yoteen", "byron", "iva", "karmon", "dyan", 
+"honora", "desiree", "emmanuel", "nolan", "crawford", "rane", 
+"darden", "entwisle", "ingram", "lange", "lomax", "moellering", 
+"moore", "nagle", "pinnix-ragland", "siedow", "brown", "holden", 
+"gibson", "gabel", "story", "mangel", "trainham", "kaelin", "roberts", 
+"snyder", "sax", "buchholtz", "williams", "zerbonia", "gilliland", 
+"earnshaw", "st", "sethi", "maggart", "rowena", "lisabeth", "sherall", 
+"cleo", "carlo", "hilma", "edgardo", "rafaela", "lisette", "jamica", 
+"efferem", "terrie", "dianna", "ned", "dolly", "andria", "debby", 
+"wes", "sophie", "albin", "roberto", "ramiro", "ferdinand", "min", 
+"merrilyn", "dru", "hagar", "tg", "delene", "lucretia", "gemma", 
+"kassandra", "partick", "marcella", "thoyd", "remond", "octavius", 
+"ayinde", "nisreen", "yves", "dahlia", "ayaz", "sayer", "guarione", 
+"andres", "marielena", "niki", "brice", "henna")
+```
+
+
+
+
+### Usage
+
+```{r, eval=F}
+gender(names, years = c(1932, 2012), method = c("ssa", "ipums", "napp",
+  "kantrowitz", "genderize", "demo"), countries = c("United States", "Canada",
+  "United Kingdom", "Germany", "Iceland", "Norway", "Sweden"))
+```
+
+
+
+### Description
+
+This function predicts the gender of a first name given a year or range of years in which the person was born. The prediction can use one of several data sets suitable for different time periods or geographical regions. See the package vignette for suggestions on using this function with multiple names and for a discussion of which data set is most suitable for your research question. When using certains methods, the genderdata data package is required; you will be prompted to install it if it is not already available.
+
+
+
+### Arguments
+
+**names**
+
+First names as a character vector. Names are case insensitive.
+
+**years**
+
+The birth year of the name whose gender is to be predicted. This argument can be either a single year, a range of years in the form c(1880, 1900). If no value is specified, then for the "ssa" method it will use the period 1932 to 2012; acceptable years for the SSA method range from 1880 to 2012, but for years before 1930 the IPUMS method is probably more accurate. For the "ipums" method the default range is the period 1789 to 1930, which is also the range of acceptable years. For the "napp" method the default range is the period 1758 to 1910, which is also the range of acceptable years. If a year or range of years is specified, then the names will be looked up for that period.
+
+**method**
+
+This value determines the data set that is used to predict the gender of the name. The "ssa" method looks up names based from the U.S. Social Security Administration baby name data. (This method is based on an implementation by Cameron Blevins.) The "ipums" method looks up names from the U.S. Census data in the Integrated Public Use Microdata Series. (This method was contributed by Ben Schmidt.) The "kantrowitz" method uses the Kantrowitz corpus of male and female names. The "genderize" method uses the Genderize.io <http://genderize.io/> API, which is based on "user profiles across major social networks." The "demo" method is uses the top 100 names in the SSA method; it is provided only for demonstration purposes when the genderdata package is not installed and it is not suitable for research purposes.
+
+**countries**
+
+The countries for which datasets are being used. For the "ssa" and "ipums" methods, the only valid option is "United States" which will be assumed if no argument is specified. For the "napp" method, you may specify a character vector with any of the following countries: "Canada", "United Kingdom", "Germany", "Iceland", "Norway", "Sweden". For the "kantrowitz" and "genderize" methods, no country should be specified.
+
+
+
+
+
+
+
+
+# Example
+
+### Load Some Data
+
+```{r, eval=T }
+fn <- c("dave", "glen", "beverly", "jennifer", "stacy", "lynn", "betty", 
+"linda", "laurie", "marilyn", "michelle", "cara", "allison", 
+"alan", "jerry", "bo", "paul", "jim", "jeff", "chuck", "henry", 
+NA, "steve", "saddiq", "kim")
+```
+
+### Categorize Names
+
+```{r}
+
+# install.packages( "gender" )
+
+library( gender )
+
+gen <- gender(  fn )
+
+print( gen, n=10 )
+
+
+```
+
